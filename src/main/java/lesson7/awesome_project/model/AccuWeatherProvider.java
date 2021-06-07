@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import lesson7.awesome_project.GlobalState;
+
 import java.io.IOException;
 
 public class AccuWeatherProvider implements IWeatherProvider {
@@ -23,16 +24,16 @@ public class AccuWeatherProvider implements IWeatherProvider {
         String key = detectCityKeyByName();
         if (period.equals(Period.NOW)) {
             String days = "1day";
-            httpRequestMethod(key,days);
+            httpRequestMethod(key, days);
         } else if (period.equals(Period.FIVE_DAYS)) {
             String days = "5day";
-            httpRequestMethod(key,days);
+            httpRequestMethod(key, days);
         }
 
     }
     //http://dataservice.accuweather.com/forecasts/v1/daily/1day/{locationKey}
 
-    private String httpRequestMethod(String key,String days){
+    private String httpRequestMethod(String key, String days) {
 
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
@@ -51,45 +52,26 @@ public class AccuWeatherProvider implements IWeatherProvider {
                 .build();
         Response response = null;
         try {
-             response = okHttpClient.newCall(request).execute();
+            response = okHttpClient.newCall(request).execute();
             String answerWeather = response.body().string();
 
             if (objectMapper.readTree(answerWeather).size() > 0) {
 
-                    if(days=="1day"){
-                String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Date").asText();
-                String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Minimum/Value").asText();
-                String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Day/IconPhrase").asText();
-                System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+                if (days == "1day") {
+                    String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Date").asText();
+                    String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Minimum/Value").asText();
+                    String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Day/IconPhrase").asText();
+                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city, DATE, WEATHER_TEXT, TEMPERATURE);
+                }
+                if (days == "5day") {
+                    int daysCount = 5;
+                    for (int i = 0; i < daysCount; i++) {
+                        String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Date").asText();
+                        String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Temperature/Minimum/Value").asText();
+                        String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Day/IconPhrase").asText();
+                        System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city, DATE, WEATHER_TEXT, TEMPERATURE);
+
                     }
-                if(days=="5day"){
-                        String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Date").asText();
-                        String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Minimum/Value").asText();
-                        String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Day/IconPhrase").asText();
-                        System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
-
-                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/1/Date").asText();
-                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/1/Temperature/Minimum/Value").asText();
-                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/1/Day/IconPhrase").asText();
-                     System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
-
-                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/2/Date").asText();
-                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/2/Temperature/Minimum/Value").asText();
-                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/2/Day/IconPhrase").asText();
-                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
-
-                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/3/Date").asText();
-                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/3/Temperature/Minimum/Value").asText();
-                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/3/Day/IconPhrase").asText();
-                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
-
-                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/4/Date").asText();
-                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/4/Temperature/Minimum/Value").asText();
-                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/4/Day/IconPhrase").asText();
-                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
-
-
-
 
 
                 }
