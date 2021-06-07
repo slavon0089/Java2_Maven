@@ -53,14 +53,48 @@ public class AccuWeatherProvider implements IWeatherProvider {
         try {
              response = okHttpClient.newCall(request).execute();
             String answerWeather = response.body().string();
-            System.out.println(answerWeather);
-
 
             if (objectMapper.readTree(answerWeather).size() > 0) {
-                //String DATE = objectMapper.readTree(answerWeather).get(0).at("/DailyForecasts/Date").asText();
-                //String TEMPERATURE = objectMapper.readTree(answerWeather).get(0).at("/Headline/Text").asText();
-                //  String WEATHER_TEXT = objectMapper.readTree(answerWeather).get(0).at("/Headline/Text").asText();
-               // System.out.printf("В городе %s на дату %s ожидается %s, температура - TEMPERATURE\n", city,DATE, WEATHER_TEXT,TEMPERATURE);
+
+                    if(days=="1day"){
+                String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Date").asText();
+                String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Minimum/Value").asText();
+                String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Day/IconPhrase").asText();
+                System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+                    }
+                if(days=="5day"){
+                        String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Date").asText();
+                        String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Minimum/Value").asText();
+                        String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Day/IconPhrase").asText();
+                        System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+
+                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/1/Date").asText();
+                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/1/Temperature/Minimum/Value").asText();
+                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/1/Day/IconPhrase").asText();
+                     System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+
+                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/2/Date").asText();
+                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/2/Temperature/Minimum/Value").asText();
+                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/2/Day/IconPhrase").asText();
+                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+
+                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/3/Date").asText();
+                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/3/Temperature/Minimum/Value").asText();
+                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/3/Day/IconPhrase").asText();
+                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+
+                     DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/4/Date").asText();
+                     TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/4/Temperature/Minimum/Value").asText();
+                     WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/4/Day/IconPhrase").asText();
+                    System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city,DATE, WEATHER_TEXT, TEMPERATURE );
+
+
+
+
+
+                }
+
+
                 return city;
             }
 
@@ -97,7 +131,6 @@ public class AccuWeatherProvider implements IWeatherProvider {
             }
             String jsonResponse = locationResponse.body().string();
             if (objectMapper.readTree(jsonResponse).size() > 0) {
-                System.out.println(jsonResponse);
                 String code = objectMapper.readTree(jsonResponse).get(0).at("/Key").asText();
                 String cityName = objectMapper.readTree(jsonResponse).get(0).at("/LocalizedName").asText();
                 city = cityName;

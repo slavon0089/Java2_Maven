@@ -17,7 +17,6 @@ public class WeatherController implements IWeatherController {
                 getCurrentWeather();
                 break;
             case 2:
-                System.out.println("НЕ РЕАЛИЗОВАНО!");
                 getWeatherForFiveDays();
                 break;
             default:
