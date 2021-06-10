@@ -1,13 +1,10 @@
 package lesson7.awesome_project.controller;
 
-
-import lesson7.awesome_project.model.AccuWeatherProvider;
-import lesson7.awesome_project.model.IWeatherProvider;
-import lesson7.awesome_project.model.Period;
+import lesson7.awesome_project.model.*;
 
 public class WeatherController implements IWeatherController {
 
-    private IWeatherProvider weatherProvider = new AccuWeatherProvider();
+    private IWeatherRepository weatherRepository = new WeatherRepository();
 
     @Override
     public void onUserInput(int command) {
@@ -19,6 +16,8 @@ public class WeatherController implements IWeatherController {
             case 2:
                 getWeatherForFiveDays();
                 break;
+            case 3:
+                getAllFromDb();
             default:
                 System.out.println("НЕТ ТАКОЙ КОМАНДЫ!");
                 System.exit(1);
@@ -26,10 +25,12 @@ public class WeatherController implements IWeatherController {
     }
 
     private void getCurrentWeather() {
-        weatherProvider.getWeather(Period.NOW);
-    }
-    private void getWeatherForFiveDays() {
-        weatherProvider.getWeather(Period.FIVE_DAYS);
+        weatherRepository.fetchWeatherFromApi(Period.NOW);
     }
 
+    private void getWeatherForFiveDays() {weatherRepository.fetchWeatherFromApi(Period.FIVE_DAYS);}
+
+    private void getAllFromDb() {
+        weatherRepository.readWeatherFromDb();
+    }
 }

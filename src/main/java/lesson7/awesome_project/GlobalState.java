@@ -1,12 +1,27 @@
 package lesson7.awesome_project;
 
+import java.sql.Connection;
+
 public final class GlobalState {
 
     private static GlobalState INSTANCE;
     private String selectedCity = null;
     public final String API_KEY = "qo5v658mtqpyUHIufOcSPy0npQZj7ivE";
+    public final String DB_NAME = "application.db";
 
-    private GlobalState() { }
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    private Connection connection;
+
+    private GlobalState() {
+
+    }
 
     public static GlobalState getInstance() {
         if (INSTANCE == null) {

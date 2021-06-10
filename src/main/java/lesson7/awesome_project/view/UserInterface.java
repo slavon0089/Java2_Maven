@@ -20,7 +20,7 @@ public class UserInterface implements IUserInterface {
             checkIsExit(userInput);
             GlobalState.getInstance().setSelectedCity(userInput);
 
-            System.out.println("Введите команду: \n1. - погода на 1 день\n2. - погода на 5 дней");
+            System.out.println("Введите команду: \n1. - погода на 1 день\n2. - погода на 5 дней\n3. - все из базы данных");
             String command = scanner.nextLine();
 
             try {
