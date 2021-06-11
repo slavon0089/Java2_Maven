@@ -22,5 +22,6 @@ public class Main {
         GlobalState.getInstance().setConnection(connection);
         IUserInterface userInterface = new UserInterface();
         userInterface.showUI();
+        connection.close();
     }
 }
