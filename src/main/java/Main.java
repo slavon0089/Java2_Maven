@@ -1,59 +1,102 @@
-import java.io.IOException;
 
-
-
-        import java.io.IOException;
-        import okhttp3.HttpUrl;
-        import okhttp3.OkHttpClient;
-        import okhttp3.Request;
-        import java.util.*;
-
-
-
-
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
-    public static final String BASE_HOST = "dataservice.accuweather.com";
-    public static final String FORECAST = "forecasts";
-    public static final String API_VERSION = "v1";
-    public static final String FORECAST_TYPE = "daily";
-    public static final String FORECAST_PERIOD = "5day";
+    public static void main(String[] args) {
 
-    public static final String SANT_PETERSBURG_KEY = "474212_PC";
-    public static final String API_KEY = "qo5v658mtqpyUHIufOcSPy0npQZj7ivE";
+        List<Course> courses1 = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException {
+        courses1.add(new Courses("Mathematics"));
+        courses1.add(new Courses("History"));
+        courses1.add(new Courses("Astronomy"));
+        courses1.add(new Courses("Programming"));
+        courses1.add(new Courses("Physics"));
 
-        OkHttpClient client = new OkHttpClient();
+        ListCourse student1 = new ListCourse();
+        student1.setCourseList(courses1);
+        student1.setName("Alex");
+
+        List<Course> courses2 = new ArrayList<>();
+        courses2.add(new Courses("Mathanalis"));
+        courses2.add(new Courses("Physics"));
+        courses2.add(new Courses("Physics"));
+        courses2.add(new Courses("Astronomy"));
+        courses2.add(new Courses("Economy"));
+        courses2.add(new Courses("Economy"));
+
+        ListCourse student2 = new ListCourse();
+        student2.setCourseList(courses2);
+        student2.setName("Bron");
+
+        List<Course> courses3 = new ArrayList<>();
+        courses3.add(new Courses("Mathematics"));
+        courses3.add(new Courses("Economy"));
+        courses3.add(new Courses("Programming"));
+        courses3.add(new Courses("Physics"));
+
+        ListCourse student3 = new ListCourse();
+        student3.setCourseList(courses3);
+        student3.setName("John");
+
+        List<Course> courses4 = new ArrayList<>();
+        courses4.add(new Courses("Physics"));
+        courses4.add(new Courses("History"));
+        courses4.add(new Courses("Astronomy"));
+        courses4.add(new Courses("Programming"));
+
+        ListCourse student4 = new ListCourse();
+        student4.setCourseList(courses4);
+        student4.setName("Smith");
+
+        List<Student> studentList = new ArrayList<>();
+
+        studentList.add(student1);
+        studentList.add(student2);
+        studentList.add(student3);
+        studentList.add(student4);
+
+        List<Course> courses = getUniqueCourses(studentList);
+        System.out.println("Unique courses: ");
+        for (Course course : courses) {
+            System.out.print(course.getName() + ", ");
+        }
 
 
-        HttpUrl url = new HttpUrl.Builder()
-                .scheme("http")
-                .host(BASE_HOST)
-                .addPathSegment(FORECAST)
-                .addPathSegment(API_VERSION)
-                .addPathSegment(FORECAST_TYPE)
-                .addPathSegment(FORECAST_PERIOD)
-                .addPathSegment(SANT_PETERSBURG_KEY)
-                .addQueryParameter("apikey", API_KEY)
-                .addQueryParameter("language","ru-ru")
-                .addQueryParameter("metric", "true")
-                .build();
+        List<Student> students = bestStudents(studentList);
+        System.out.println("\nBest 3 students:");
+        for (Student student : students) {
+            System.out.print(student.getName() + ", ");
+        }
 
-        System.out.println(url.toString());
-
-
-        Request requesthttp = new Request.Builder()
-                .addHeader("accept", "application/json")
-                .url(url)
-                .build();
-
-        String jsonResponse = client.newCall(requesthttp).execute().body().string();
-        System.out.println(jsonResponse);
-
-
-
-
+        List<Student> studentsInCourse = studentsOnCourse(studentList, new Courses("History"));
+        System.out.println("\nStudents on course: ");
+        for (Student student : studentsInCourse) {
+            System.out.print(student.getName() + ", ");
+        }
     }
+
+    static List<Course> getUniqueCourses(List<Student> students) {
+        return students.stream().flatMap(
+                s -> s.getAllCourses().stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    static List<Student> bestStudents(List<Student> students) {
+        return students.stream()
+                .sorted(Comparator.comparing(student -> student.getAllCourses().size(), Comparator.reverseOrder()))
+                .limit(3)
+                .collect(Collectors.toList());
+    }
+
+    static List<Student> studentsOnCourse(List<Student> studentList, Course course) {
+        return studentList.stream()
+                .filter(student -> student.getAllCourses().contains(course))
+                .collect(Collectors.toList());
+    }
+
 }
