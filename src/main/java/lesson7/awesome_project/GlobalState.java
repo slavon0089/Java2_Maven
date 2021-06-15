@@ -6,7 +6,9 @@ public final class GlobalState {
 
     private static GlobalState INSTANCE;
     private String selectedCity = null;
-    public final String API_KEY = "qo5v658mtqpyUHIufOcSPy0npQZj7ivE";
+    public final String API_KEY = "BzanpjI8QojtzbeYaawJD6pP3o3UKA41";
+    //BzanpjI8QojtzbeYaawJD6pP3o3UKA41
+    //qo5v658mtqpyUHIufOcSPy0npQZj7ivE
     public final String DB_NAME = "application.db";
 
     public Connection getConnection() {

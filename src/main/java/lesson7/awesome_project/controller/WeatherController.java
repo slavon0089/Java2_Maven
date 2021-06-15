@@ -18,6 +18,7 @@ public class WeatherController implements IWeatherController {
                 break;
             case 3:
                 getAllFromDb();
+                break;
             default:
                 System.out.println("НЕТ ТАКОЙ КОМАНДЫ!");
                 System.exit(1);

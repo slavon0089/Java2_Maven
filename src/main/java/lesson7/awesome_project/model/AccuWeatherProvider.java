@@ -9,6 +9,7 @@ import lesson7.awesome_project.GlobalState;
 import lesson7.awesome_project.entity.WeatherObject;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class AccuWeatherProvider implements IWeatherProvider {
                 .addPathSegment(days)
                 .addPathSegment(key)
                 .addQueryParameter("apikey", GlobalState.getInstance().API_KEY)
+                .addQueryParameter("language", "ru-ru")
+                .addQueryParameter("metric", "true")
                 .build();
 
         Request request = new Request.Builder()
@@ -60,18 +63,19 @@ public class AccuWeatherProvider implements IWeatherProvider {
 
                 if (days == "1day") {
                     String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Date").asText();
-                    String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Minimum/Value").asText();
+                    String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Temperature/Maximum/Value").asText();
                     String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/0/Day/IconPhrase").asText();
                     System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city, DATE, WEATHER_TEXT, TEMPERATURE);
-                    void populationDB();
+                    populationDB(city,  DATE,  WEATHER_TEXT);
                 }
                 if (days == "5day") {
                     int daysCount = 5;
                     for (int i = 0; i < daysCount; i++) {
                         String DATE = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Date").asText();
-                        String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Temperature/Minimum/Value").asText();
+                        String TEMPERATURE = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Temperature/Maximum/Value").asText();
                         String WEATHER_TEXT = objectMapper.readTree(answerWeather).at("/DailyForecasts/" + i + "/Day/IconPhrase").asText();
                         System.out.printf("В городе %s на дату %s ожидается %s, температура - %s\n", city, DATE, WEATHER_TEXT, TEMPERATURE);
+                        populationDB(city,  DATE,  WEATHER_TEXT);
 
                     }
 
@@ -82,15 +86,20 @@ public class AccuWeatherProvider implements IWeatherProvider {
                 return city;
             }
 
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
         return key;
     }
 
-    public static String populationDB (String city,String date, String weather) {
-        String query = String.format("INSERT INTO weather(city,date,weather) VALUES ('%s', '%s', '%s')",city,date,weather) ;
-        return city;
+    public  void populationDB (String city, String date, String weather) throws SQLException {
+     //   PreparedStatement ps = connection.prepareStatement(
+        Connection conn = GlobalState.getInstance().getConnection();
+        String stringForQuery = String.format("INSERT INTO weather (city, date, weather) VALUES ('%s', '%s', '%s');",city, date, weather) ;
+        Statement stmt = conn.createStatement();
+        stmt.addBatch(stringForQuery);
+        stmt.executeBatch();
+
     }
 
 
@@ -128,7 +137,7 @@ public class AccuWeatherProvider implements IWeatherProvider {
                 String code = objectMapper.readTree(jsonResponse).get(0).at("/Key").asText();
                 String cityName = objectMapper.readTree(jsonResponse).get(0).at("/LocalizedName").asText();
                 String countryName = objectMapper.readTree(jsonResponse).get(0).at("/Country/LocalizedName").asText();
-
+                city = cityName;
                 System.out.printf("Найден город %s в стране %s, код - %s\n", cityName, countryName, code);
                 return code;
             } else {
